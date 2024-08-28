@@ -2,6 +2,8 @@ from django.db import models
 
 from django.contrib.auth import get_user_model
 
+User = get_user_model()
+
 
 class PublishedModel(models.Model):
     is_published = models.BooleanField(
@@ -15,9 +17,6 @@ class PublishedModel(models.Model):
         abstract = True
 
 
-User = get_user_model()
-
-
 class Post(PublishedModel):
     title = models.CharField("Заголовок", max_length=256)
     text = models.TextField("Текст")
@@ -27,7 +26,10 @@ class Post(PublishedModel):
         "можно делать отложенные публикации.",
     )
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, verbose_name="Автор публикации"
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="Автор публикации",
+        related_name="posts",
     )
     location = models.ForeignKey(
         "Location",
@@ -35,10 +37,14 @@ class Post(PublishedModel):
         null=True,
         blank=True,
         verbose_name="Местоположение",
+        related_name="posts",
     )
     category = models.ForeignKey(
-        "Category", on_delete=models.SET_NULL, null=True,
-        verbose_name="Категория"
+        "Category",
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name="Категория",
+        related_name="posts",
     )
 
     class Meta:
@@ -56,7 +62,7 @@ class Category(PublishedModel):
         "Идентификатор",
         unique=True,
         help_text="Идентификатор страницы для URL; разрешены "
-        "символы латиницы, цифры, дефис и подчёркивание."
+        "символы латиницы, цифры, дефис и подчёркивание.",
     )
 
     class Meta:

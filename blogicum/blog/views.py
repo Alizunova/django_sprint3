@@ -8,7 +8,7 @@ from django.utils import timezone
 def index(request):
     template = "blog/index.html"
     post_list = (
-        Post.objects.all()
+        Post.objects.select_related('author', 'location', 'category')
         .filter(
             pub_date__lte=timezone.now(), is_published=True,
             category__is_published=True
